@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class    gPatternBotApplication {
+public class PatternBotApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PatternBotApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PatternBotApplication.class, args);
+    }
 
 }
