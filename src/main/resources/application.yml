@@ -1,9 +1,11 @@
 spring:
+  config:
+    import: application_secret.yml
   application:
     name: telegram_part
 
 server:
-  port: ${MY_SERVER_PORT}
+  port: 8083
 
 telegram:
   bot:
