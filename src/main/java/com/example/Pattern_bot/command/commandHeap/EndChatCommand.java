@@ -4,7 +4,7 @@ import com.example.Pattern_bot.command.abstractCommands.CallbackCommand;
 import com.example.Pattern_bot.command.annotation.BotCommand;
 import com.example.Pattern_bot.session.UserSession;
 import com.example.Pattern_bot.session.SessionManager;
-import com.example.Pattern_bot.listener.menus.GenderMenu;
+import com.example.Pattern_bot.listener.menus.ChatControlMenu;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 
@@ -12,14 +12,14 @@ import com.pengrad.telegrambot.model.Update;
 public class EndChatCommand extends CallbackCommand {
 
     private final SessionManager sessionManager;
-    private final GenderMenu genderMenu;
+    private final ChatControlMenu chatControlMenu;
 
     public EndChatCommand(TelegramBot telegramBot,
                           SessionManager sessionManager,
-                          GenderMenu genderMenu) {
+                          ChatControlMenu chatControlMenu) {
         super(telegramBot);
         this.sessionManager = sessionManager;
-        this.genderMenu = genderMenu;
+        this.chatControlMenu = chatControlMenu;
     }
 
     @Override
@@ -29,9 +29,9 @@ public class EndChatCommand extends CallbackCommand {
 
         if (session != null && session.getPartnerChatId() != null) {
             // Уведомляем собеседника о завершении чата
-            Long partnerChatId = Long.parseLong(session.getPartnerChatId());
+            long partnerChatId = Long.parseLong(session.getPartnerChatId());
             sendTextMessage(partnerChatId, "❌ Собеседник завершил диалог.");
-            genderMenu.sendChatControls(partnerChatId);
+            chatControlMenu.sendChatControls(partnerChatId);
 
             // Очищаем данные о партнере у собеседника
             UserSession partnerSession = sessionManager.getSession(partnerChatId);
@@ -45,10 +45,10 @@ public class EndChatCommand extends CallbackCommand {
             sessionManager.updateSession(session);
 
             sendTextMessage(chatId, "✅ Диалог завершен. Вы можете найти нового собеседника.");
-            genderMenu.sendChatControls(chatId);
+            chatControlMenu.sendChatControls(chatId);
         } else {
             sendTextMessage(chatId, "❌ Вы не находитесь в диалоге.");
-            genderMenu.sendChatControls(chatId);
+            chatControlMenu.sendChatControls(chatId);
         }
     }
 }

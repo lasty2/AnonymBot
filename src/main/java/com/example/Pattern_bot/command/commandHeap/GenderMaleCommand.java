@@ -2,9 +2,9 @@ package com.example.Pattern_bot.command.commandHeap;
 
 import com.example.Pattern_bot.command.abstractCommands.CallbackCommand;
 import com.example.Pattern_bot.command.annotation.BotCommand;
+import com.example.Pattern_bot.listener.menus.ChatControlMenu;
 import com.example.Pattern_bot.session.UserSession;
 import com.example.Pattern_bot.session.SessionManager;
-import com.example.Pattern_bot.listener.menus.GenderMenu;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 
@@ -12,14 +12,14 @@ import com.pengrad.telegrambot.model.Update;
 public class GenderMaleCommand extends CallbackCommand {
 
     private final SessionManager sessionManager;
-    private final GenderMenu genderMenu;
+    private final ChatControlMenu chatControlMenu;
 
     public GenderMaleCommand(TelegramBot telegramBot,
                              SessionManager sessionManager,
-                             GenderMenu genderMenu) {
+                             ChatControlMenu chatControlMenu) {
         super(telegramBot);
         this.sessionManager = sessionManager;
-        this.genderMenu = genderMenu;
+        this.chatControlMenu = chatControlMenu;
     }
 
     @Override
@@ -38,6 +38,6 @@ public class GenderMaleCommand extends CallbackCommand {
         sendTextMessage(chatId, "✅ Отлично! Ваш пол установлен: " + genderText +
                 "\n\nТеперь вы можете начать поиск собеседника.");
 
-        genderMenu.sendChatControls(chatId);
+        chatControlMenu.sendChatControls(chatId);
     }
 }

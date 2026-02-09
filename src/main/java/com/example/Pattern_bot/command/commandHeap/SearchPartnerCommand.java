@@ -2,6 +2,7 @@ package com.example.Pattern_bot.command.commandHeap;
 
 import com.example.Pattern_bot.command.abstractCommands.CallbackCommand;
 import com.example.Pattern_bot.command.annotation.BotCommand;
+import com.example.Pattern_bot.listener.menus.ChatControlMenu;
 import com.example.Pattern_bot.session.UserSession;
 import com.example.Pattern_bot.session.SessionManager;
 import com.example.Pattern_bot.listener.menus.GenderMenu;
@@ -19,15 +20,18 @@ public class SearchPartnerCommand extends CallbackCommand {
 
     private final SessionManager sessionManager;
     private final GenderMenu genderMenu;
+    private final ChatControlMenu chatControlMenu;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final ConcurrentHashMap<Long, ScheduledFuture<?>> searchTasks = new ConcurrentHashMap<>();
 
     public SearchPartnerCommand(TelegramBot telegramBot,
                                 SessionManager sessionManager,
-                                GenderMenu genderMenu) {
+                                GenderMenu genderMenu,
+                                ChatControlMenu chatControlMenu) {
         super(telegramBot);
         this.sessionManager = sessionManager;
         this.genderMenu = genderMenu;
+        this.chatControlMenu = chatControlMenu;
     }
 
     @Override
@@ -107,8 +111,8 @@ public class SearchPartnerCommand extends CallbackCommand {
                     💬 Отправляйте текстовые сообщения, они будут пересылаться вашему собеседнику.
                     ❌ Чтобы завершить диалог, нажмите 'Завершить диалог'""");
 
-            genderMenu.sendChatControls(chatId);
-            genderMenu.sendChatControls(partnerChatId);
+            chatControlMenu.sendChatControls(chatId);
+            chatControlMenu.sendChatControls(partnerChatId);
 
         } else {
             sendTextMessage(chatId, "😔 Пока нет доступных собеседников.\n" +

@@ -2,9 +2,9 @@ package com.example.Pattern_bot.command.commandHeap;
 
 import com.example.Pattern_bot.command.abstractCommands.CallbackCommand;
 import com.example.Pattern_bot.command.annotation.BotCommand;
+import com.example.Pattern_bot.listener.menus.ChatControlMenu;
 import com.example.Pattern_bot.session.UserSession;
 import com.example.Pattern_bot.session.SessionManager;
-import com.example.Pattern_bot.listener.menus.GenderMenu;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import lombok.extern.slf4j.Slf4j;
@@ -14,15 +14,15 @@ import lombok.extern.slf4j.Slf4j;
 public class StopSearchCommand extends CallbackCommand {
 
     private final SessionManager sessionManager;
-    private final GenderMenu genderMenu;
+    private final ChatControlMenu chatControlMenu;
 
     public StopSearchCommand(TelegramBot telegramBot,
                              SessionManager sessionManager,
-                             GenderMenu genderMenu,
+                             ChatControlMenu chatControlMenu,
                              SearchPartnerCommand searchPartnerCommand) { // Добавляем в конструктор
         super(telegramBot);
         this.sessionManager = sessionManager;
-        this.genderMenu = genderMenu;
+        this.chatControlMenu = chatControlMenu;
         // Добавляем зависимость
     }
 
@@ -38,7 +38,7 @@ public class StopSearchCommand extends CallbackCommand {
 
         if (!session.isSearching()) {
             sendTextMessage(chatId, "ℹ️ Вы не находитесь в поиске собеседника.");
-            genderMenu.sendChatControls(chatId);
+            chatControlMenu.sendChatControls(chatId);
             return;
         }
 
@@ -52,6 +52,6 @@ public class StopSearchCommand extends CallbackCommand {
         sendTextMessage(chatId, "🛑 Поиск собеседника остановлен.\n" +
                 "Вы можете начать поиск снова в любое время.");
 
-        genderMenu.sendChatControls(chatId);
+        chatControlMenu.sendChatControls(chatId);
     }
 }

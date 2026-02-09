@@ -30,25 +30,4 @@ public class GenderMenu {
                 "Пожалуйста, выберите ваш пол для лучшего подбора собеседника:")
                 .replyMarkup(keyboard));
     }
-
-    public void sendChatControls(long chatId) {
-        InlineKeyboardButton searchButton = new InlineKeyboardButton("🔍 Найти собеседника")
-                .callbackData("/search_partner");
-        InlineKeyboardButton stopButton = new InlineKeyboardButton("⏹ Остановить поиск")
-                .callbackData("/stop_search");
-        InlineKeyboardButton endButton = new InlineKeyboardButton("❌ Завершить диалог")
-                .callbackData("/end_chat");
-        InlineKeyboardButton menuButton = new InlineKeyboardButton("🏠 Главное меню")
-                .callbackData("/main_menu");
-
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(
-                new InlineKeyboardButton[]{searchButton},
-                new InlineKeyboardButton[]{stopButton, endButton},
-                new InlineKeyboardButton[]{menuButton}
-        );
-
-        telegramBot.execute(new SendMessage(chatId,
-                "Управление чатом:")
-                .replyMarkup(keyboard));
-    }
 }
