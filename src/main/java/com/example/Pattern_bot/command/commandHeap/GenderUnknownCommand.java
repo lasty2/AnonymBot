@@ -36,7 +36,16 @@ public class GenderUnknownCommand extends CallbackCommand {
         session.setGender(gender);
         sessionManager.updateSession(session);
 
-        sendTextMessage(chatId, "✅ Отлично! Ваш пол установлен: " + genderText +
+        String genderSpecificMessage = "";
+        if ("FEMALE".equals(gender)) {
+            genderSpecificMessage = "\n\n✨ Вы будете искать собеседников *мужского пола*.";
+        } else if ("MALE".equals(gender)) {
+            genderSpecificMessage = "\n\n✨ Вы будете искать собеседников *женского пола*.";
+        } else {
+            genderSpecificMessage = "\n\n✨ Вы будете искать собеседников, которые также *не указали пол*.";
+        }
+
+        sendTextMessage(chatId, "✅ Отлично! Ваш пол установлен: " + genderText + genderSpecificMessage +
                 "\n\nТеперь вы можете начать поиск собеседника.");
 
         chatControlMenu.sendChatControls(chatId);

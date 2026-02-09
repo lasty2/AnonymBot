@@ -32,7 +32,6 @@ public class SessionManager {
         if (session == null) {
             session = new UserSession(chatId, username);
             sessions.put(chatId, session);
-            log.info("Created new session for chatId: {}", chatId);
         }
         return session;
     }
@@ -43,7 +42,6 @@ public class SessionManager {
 
     public void removeSession(Long chatId) {
         sessions.remove(chatId);
-        log.info("Removed session for chatId: {}", chatId);
     }
 
     private void cleanupOldSessions() {
@@ -52,16 +50,32 @@ public class SessionManager {
                 entry.getValue().getSessionStartTime()
                         .isBefore(LocalDateTime.now().minusHours(2))
         );
-        log.info("Cleaned up {} old sessions", initialSize - sessions.size());
     }
 
     public Long findPartner(UserSession currentSession) {
+        String requiredGender;
+
+        switch (currentSession.getGender()) {
+            case "MALE":
+                requiredGender = "FEMALE";
+                break;
+            case "FEMALE":
+                requiredGender = "MALE";
+                break;
+            case "UNKNOWN":
+                requiredGender = "UNKNOWN";
+                break;
+            default:
+                requiredGender = "UNKNOWN";
+                break;
+        }
         return sessions.values().stream()
                 .filter(session ->
                         !session.getChatId().equals(currentSession.getChatId()) &&
                                 session.isReadyForChat() &&
                                 session.getPartnerChatId() == null &&
-                                session.isSearching()
+                                session.isSearching() &&
+                                requiredGender.equals(session.getGender())
                 )
                 .findFirst()
                 .map(UserSession::getChatId)
