@@ -53,32 +53,36 @@ public class SessionManager {
     }
 
     public Long findPartner(UserSession currentSession) {
-        String requiredGender;
-
-        switch (currentSession.getGender()) {
-            case "MALE":
-                requiredGender = "FEMALE";
-                break;
-            case "FEMALE":
-                requiredGender = "MALE";
-                break;
-            case "UNKNOWN":
-                requiredGender = "UNKNOWN";
-                break;
-            default:
-                requiredGender = "UNKNOWN";
-                break;
-        }
         return sessions.values().stream()
                 .filter(session ->
                         !session.getChatId().equals(currentSession.getChatId()) &&
                                 session.isReadyForChat() &&
                                 session.getPartnerChatId() == null &&
                                 session.isSearching() &&
-                                requiredGender.equals(session.getGender())
+                                isCompatible(currentSession, session)
                 )
                 .findFirst()
                 .map(UserSession::getChatId)
                 .orElse(null);
+    }
+
+    private boolean isCompatible(UserSession user1, UserSession user2) {
+        if (!user1.hasSelectedPreferences() || !user2.hasSelectedPreferences()) {
+            return false;
+        }
+
+        boolean user1CompatibleWithUser2 = isUserCompatibleWithTarget(user1, user2);
+
+        boolean user2CompatibleWithUser1 = isUserCompatibleWithTarget(user2, user1);
+
+        return user1CompatibleWithUser2 && user2CompatibleWithUser1;
+    }
+
+    private boolean isUserCompatibleWithTarget(UserSession user, UserSession target) {
+        String preferredGender = user.getPreferredGender();
+
+        if ("ALL".equals(preferredGender)) { return true;}
+
+        return preferredGender != null && preferredGender.equals(target.getGender());
     }
 }

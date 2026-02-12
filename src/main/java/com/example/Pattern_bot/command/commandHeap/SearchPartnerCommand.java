@@ -3,6 +3,7 @@ package com.example.Pattern_bot.command.commandHeap;
 import com.example.Pattern_bot.command.abstractCommands.CallbackCommand;
 import com.example.Pattern_bot.command.annotation.BotCommand;
 import com.example.Pattern_bot.listener.menus.ChatControlMenu;
+import com.example.Pattern_bot.listener.menus.PreferredGenderMenu;
 import com.example.Pattern_bot.session.UserSession;
 import com.example.Pattern_bot.session.SessionManager;
 import com.example.Pattern_bot.listener.menus.GenderMenu;
@@ -21,17 +22,20 @@ public class SearchPartnerCommand extends CallbackCommand {
     private final SessionManager sessionManager;
     private final GenderMenu genderMenu;
     private final ChatControlMenu chatControlMenu;
+    private final PreferredGenderMenu preferredGenderMenu;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final ConcurrentHashMap<Long, ScheduledFuture<?>> searchTasks = new ConcurrentHashMap<>();
 
     public SearchPartnerCommand(TelegramBot telegramBot,
                                 SessionManager sessionManager,
                                 GenderMenu genderMenu,
-                                ChatControlMenu chatControlMenu) {
+                                ChatControlMenu chatControlMenu,
+                                PreferredGenderMenu preferredGenderMenu) {
         super(telegramBot);
         this.sessionManager = sessionManager;
         this.genderMenu = genderMenu;
         this.chatControlMenu = chatControlMenu;
+        this.preferredGenderMenu = preferredGenderMenu;
     }
 
     @Override
@@ -39,9 +43,15 @@ public class SearchPartnerCommand extends CallbackCommand {
         long chatId = getChatId(update);
         UserSession session = sessionManager.getSession(chatId);
 
-        if (session == null || "UNKNOWN".equals(session.getGender())) {
+        if (session == null) {
             sendTextMessage(chatId, "⚠️ Сначала выберите ваш пол!");
             genderMenu.sendGenderSelection(chatId);
+            return;
+        }
+
+        if (!session.hasSelectedPreferences()) {
+            sendTextMessage(chatId, "⚠️ Сначала выберите, кого вы хотите искать!");
+            preferredGenderMenu.sendPreferredGenderSelection(chatId);
             return;
         }
 
