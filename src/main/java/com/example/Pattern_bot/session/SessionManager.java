@@ -1,6 +1,6 @@
 package com.example.Pattern_bot.session;
 
-import com.example.Pattern_bot.session.UserSession;
+import com.example.Pattern_bot.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +17,10 @@ public class SessionManager {
 
     private final Map<Long, UserSession> sessions = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final UserService userService;
 
-    public SessionManager() {
+    public SessionManager(UserService userService) {
+        this.userService = userService;
         // Очистка устаревших сессий каждые 30 минут
         scheduler.scheduleAtFixedRate(this::cleanupOldSessions, 30, 30, TimeUnit.MINUTES);
     }
@@ -32,12 +34,27 @@ public class SessionManager {
         if (session == null) {
             session = new UserSession(chatId, username);
             sessions.put(chatId, session);
+
+            userService.createOrUpdateUser(chatId, username);
+
+            UserSession finalSession = session;
+            userService.getUserByChatId(chatId).ifPresent(user -> {
+                if (user.getGender() != null) {
+                    finalSession.setGender(user.getGender());}
+                if (user.getPreferredGender() != null) {
+                    finalSession.setPreferredGender(user.getPreferredGender());}});
+        } else {
+            session.setUsername(username);
+            userService.createOrUpdateUser(chatId, username);
         }
         return session;
     }
 
     public void updateSession(UserSession session) {
         sessions.put(session.getChatId(), session);
+
+        if (session.getGender() != null) {userService.updateGender(session.getChatId(), session.getGender());}
+        if (session.getPreferredGender() != null) {userService.updatePreferredGender(session.getChatId(), session.getPreferredGender());}
     }
 
     public void removeSession(Long chatId) {
@@ -72,7 +89,6 @@ public class SessionManager {
         }
 
         boolean user1CompatibleWithUser2 = isUserCompatibleWithTarget(user1, user2);
-
         boolean user2CompatibleWithUser1 = isUserCompatibleWithTarget(user2, user1);
 
         return user1CompatibleWithUser2 && user2CompatibleWithUser1;

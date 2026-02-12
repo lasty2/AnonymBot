@@ -7,6 +7,7 @@ import com.example.Pattern_bot.listener.menus.PreferredGenderMenu;
 import com.example.Pattern_bot.session.UserSession;
 import com.example.Pattern_bot.session.SessionManager;
 import com.example.Pattern_bot.listener.menus.GenderMenu;
+import com.example.Pattern_bot.service.UserService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 
@@ -23,6 +24,7 @@ public class SearchPartnerCommand extends CallbackCommand {
     private final GenderMenu genderMenu;
     private final ChatControlMenu chatControlMenu;
     private final PreferredGenderMenu preferredGenderMenu;
+    private final UserService userService;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final ConcurrentHashMap<Long, ScheduledFuture<?>> searchTasks = new ConcurrentHashMap<>();
 
@@ -30,12 +32,14 @@ public class SearchPartnerCommand extends CallbackCommand {
                                 SessionManager sessionManager,
                                 GenderMenu genderMenu,
                                 ChatControlMenu chatControlMenu,
-                                PreferredGenderMenu preferredGenderMenu) {
+                                PreferredGenderMenu preferredGenderMenu,
+                                UserService userService) {
         super(telegramBot);
         this.sessionManager = sessionManager;
         this.genderMenu = genderMenu;
         this.chatControlMenu = chatControlMenu;
         this.preferredGenderMenu = preferredGenderMenu;
+        this.userService = userService;
     }
 
     @Override
@@ -59,6 +63,8 @@ public class SearchPartnerCommand extends CallbackCommand {
             sendTextMessage(chatId, "❌ Вы уже в диалоге! Завершите текущий диалог перед поиском нового собеседника.");
             return;
         }
+
+        userService.incrementCountUses(chatId);
 
         // Отменяем предыдущие задачи поиска для этого пользователя
         cancelSearchTask(chatId);

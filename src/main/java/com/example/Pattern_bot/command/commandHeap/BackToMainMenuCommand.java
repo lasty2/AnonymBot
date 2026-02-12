@@ -37,6 +37,6 @@ public class BackToMainMenuCommand extends CallbackCommand {
             return;
         }
 
-        mainMenu.sendWelcomeMessage(chatId);
+        mainMenu.sendExistingUserWelcome(chatId);
     }
 }

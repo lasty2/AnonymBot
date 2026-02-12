@@ -42,4 +42,30 @@ public class MainMenu {
                 .parseMode(ParseMode.valueOf("Markdown"))
                 .replyMarkup(keyboard));
     }
+
+    public void sendExistingUserWelcome(long chatId) {
+        String welcomeText = """
+        🎭 *Добро пожаловать обратно в Анонимный Чат!*
+        
+        Рады видеть вас снова!
+        
+        Ваши настройки сохранены. Вы можете сразу начать поиск собеседника.
+        """;
+
+        InlineKeyboardButton searchButton = new InlineKeyboardButton("🔍 Найти собеседника")
+                .callbackData("/search_partner");
+        InlineKeyboardButton helpButton = new InlineKeyboardButton("❓ Помощь")
+                .callbackData("/help");
+        InlineKeyboardButton rulesButton = new InlineKeyboardButton("📜 Правила")
+                .callbackData("/rules");
+
+        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(
+                new InlineKeyboardButton[]{searchButton},
+                new InlineKeyboardButton[]{helpButton, rulesButton}
+        );
+
+        telegramBot.execute(new SendMessage(chatId, welcomeText)
+                .parseMode(ParseMode.valueOf("Markdown"))
+                .replyMarkup(keyboard));
+    }
 }
