@@ -72,7 +72,7 @@ public class SearchPartnerCommand extends CallbackCommand {
         session.setSearching(true);
         sessionManager.updateSession(session);
 
-        sendTextMessage(chatId, "🔍 Ищем собеседника... Пожалуйста, подождите.");
+        chatControlMenu.sendSearchingMenu(chatId);
 
         // Запускаем поиск собеседника
         ScheduledFuture<?> future = scheduler.schedule(() -> findPartnerForUser(chatId, session), 2, TimeUnit.SECONDS);
@@ -83,7 +83,6 @@ public class SearchPartnerCommand extends CallbackCommand {
         // Проверяем, что пользователь все еще ищет
         UserSession currentSession = sessionManager.getSession(chatId);
         if (currentSession == null || !currentSession.isSearching()) {
-            sendTextMessage(chatId, "🛑 Поиск остановлен.");
             searchTasks.remove(chatId);
             return;
         }
@@ -118,17 +117,13 @@ public class SearchPartnerCommand extends CallbackCommand {
 
             // Уведомляем обоих пользователей
             sendTextMessage(chatId, """
-                    ✅ Собеседник найден! Начинайте общение.
-                    💬 Отправляйте текстовые сообщения, они будут пересылаться вашему собеседнику.
-                    ❌ Чтобы завершить диалог, нажмите 'Завершить диалог'""");
+                    ✅ Собеседник найден! Начинайте общение.'""");
+            chatControlMenu.sendChattingMenu(chatId);
 
             sendTextMessage(partnerChatId, """
-                    ✅ Собеседник найден! Начинайте общение.
-                    💬 Отправляйте текстовые сообщения, они будут пересылаться вашему собеседнику.
-                    ❌ Чтобы завершить диалог, нажмите 'Завершить диалог'""");
+                    ✅ Собеседник найден! Начинайте общение.""");
+            chatControlMenu.sendChattingMenu(partnerChatId);
 
-            chatControlMenu.sendChatControls(chatId);
-            chatControlMenu.sendChatControls(partnerChatId);
 
         } else {
             sendTextMessage(chatId, "😔 Пока нет доступных собеседников.\n" +

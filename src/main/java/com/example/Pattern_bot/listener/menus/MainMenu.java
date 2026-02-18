@@ -43,17 +43,19 @@ public class MainMenu {
                 .replyMarkup(keyboard));
     }
 
-    public void sendExistingUserWelcome(long chatId) {
+    public void sendMainMenuWithControls(long chatId) {
         String welcomeText = """
-        🎭 *Добро пожаловать обратно в Анонимный Чат!*
+        🎭 *Главное меню*
         
-        Рады видеть вас снова!
-        
-        Ваши настройки сохранены. Вы можете сразу начать поиск собеседника.
+        Выберите действие:
         """;
 
         InlineKeyboardButton searchButton = new InlineKeyboardButton("🔍 Найти собеседника")
                 .callbackData("/search_partner");
+        InlineKeyboardButton genderButton = new InlineKeyboardButton("👤 Сменить пол")
+                .callbackData("/change_gender");
+        InlineKeyboardButton preferencesButton = new InlineKeyboardButton("⚙️ Кого ищу")
+                .callbackData("/change_preferences");
         InlineKeyboardButton helpButton = new InlineKeyboardButton("❓ Помощь")
                 .callbackData("/help");
         InlineKeyboardButton rulesButton = new InlineKeyboardButton("📜 Правила")
@@ -61,6 +63,7 @@ public class MainMenu {
 
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(
                 new InlineKeyboardButton[]{searchButton},
+                new InlineKeyboardButton[]{genderButton, preferencesButton},
                 new InlineKeyboardButton[]{helpButton, rulesButton}
         );
 
