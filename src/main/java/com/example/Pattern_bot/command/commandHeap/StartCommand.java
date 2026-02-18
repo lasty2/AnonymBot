@@ -52,10 +52,9 @@ public class StartCommand extends MessageCommand {
 
         sendTextMessage(chatId, greeting);
 
-        if (session.hasSelectedPreferences()) {
-            chatControlMenu.sendChatControls(chatId);
-        } else {
-            mainMenu.sendWelcomeMessage(chatId);}
+        Optional<UserEntity> userOpt = userService.getUserByChatId(chatId);
+        if (userOpt.isPresent() && userOpt.get().getGender() != null) { chatControlMenu.sendChatControls(chatId);}
+        else {mainMenu.sendWelcomeMessage(chatId);}
 
     }
 

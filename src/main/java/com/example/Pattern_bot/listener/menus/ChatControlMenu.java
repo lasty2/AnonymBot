@@ -19,6 +19,8 @@ public class ChatControlMenu {
                 .callbackData("/stop_search");
         InlineKeyboardButton endButton = new InlineKeyboardButton("❌ Завершить диалог")
                 .callbackData("/end_chat");
+        InlineKeyboardButton genderButton = new InlineKeyboardButton("👤 Сменить пол")
+                .callbackData("/change_gender");
         InlineKeyboardButton preferencesButton = new InlineKeyboardButton("⚙️ Кого ищу")
                 .callbackData("/change_preferences");
         InlineKeyboardButton menuButton = new InlineKeyboardButton("🏠 Главное меню")
@@ -27,7 +29,8 @@ public class ChatControlMenu {
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(
                 new InlineKeyboardButton[]{searchButton},
                 new InlineKeyboardButton[]{stopButton, endButton},
-                new InlineKeyboardButton[]{preferencesButton, menuButton}
+                new InlineKeyboardButton[]{genderButton, preferencesButton},
+                new InlineKeyboardButton[]{menuButton}
         );
 
         telegramBot.execute(new SendMessage(chatId,
