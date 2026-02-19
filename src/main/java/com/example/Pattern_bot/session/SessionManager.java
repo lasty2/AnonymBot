@@ -1,6 +1,6 @@
 package com.example.Pattern_bot.session;
 
-import com.example.Pattern_bot.service.UserService;
+import com.example.Pattern_bot.service.otherService.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -36,13 +36,6 @@ public class SessionManager {
             sessions.put(chatId, session);
 
             userService.createOrUpdateUser(chatId, username);
-
-            UserSession finalSession = session;
-            userService.getUserByChatId(chatId).ifPresent(user -> {
-                if (user.getGender() != null) {
-                    finalSession.setGender(user.getGender());}
-                if (user.getPreferredGender() != null) {
-                    finalSession.setPreferredGender(user.getPreferredGender());}});
         } else {
             session.setUsername(username);
             userService.createOrUpdateUser(chatId, username);

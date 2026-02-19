@@ -7,7 +7,7 @@ import com.example.Pattern_bot.listener.menus.PreferredGenderMenu;
 import com.example.Pattern_bot.session.UserSession;
 import com.example.Pattern_bot.session.SessionManager;
 import com.example.Pattern_bot.listener.menus.GenderMenu;
-import com.example.Pattern_bot.service.UserService;
+import com.example.Pattern_bot.service.otherService.UserService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 

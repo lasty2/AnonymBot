@@ -31,9 +31,9 @@ public class MainListenerService {
     }
 
     public void workWithText(String text, Update update) {
-        //if (text.startsWith(prefix)) {
-            //commandContainer.process(text, update);
-        //} else {
+        if (text.startsWith(prefix)) {
+            commandContainer.process(text, update);
+        } else {
             long chatId = update.message().chat().id();
             UserSession session = sessionManager.getSession(chatId);
 
@@ -54,7 +54,7 @@ public class MainListenerService {
             }
 
             //dontUnderstand(update.message().chat().id());
-        //}
+        }
 
     }
 

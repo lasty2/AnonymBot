@@ -1,4 +1,4 @@
-package com.example.Pattern_bot.service;
+package com.example.Pattern_bot.service.otherService;
 
 import com.example.Pattern_bot.model.UserEntity;
 import com.example.Pattern_bot.repository.UserRepository;
@@ -23,13 +23,11 @@ public class UserService {
 
         if (userOptional.isPresent()) {
             UserEntity user = userOptional.get();
-            user.setUsername(username);
             user.setLastActivityDate(LocalDateTime.now());
             return userRepository.save(user);
         } else {
             UserEntity newUser = new UserEntity();
             newUser.setChatId(chatId);
-            newUser.setUsername(username);
             newUser.setCountUses(0);
             return userRepository.save(newUser);
         }

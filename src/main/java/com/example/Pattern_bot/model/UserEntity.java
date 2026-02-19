@@ -20,9 +20,6 @@ public class UserEntity {
     @Column(name = "chat_id", nullable = false, unique = true)
     private Long chatId;
 
-    @Column(name = "username")
-    private String username;
-
     @Column(name = "gender")
     private String gender;
 
