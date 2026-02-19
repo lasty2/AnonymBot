@@ -7,6 +7,7 @@ import com.example.Pattern_bot.listener.menus.PreferredGenderMenu;
 import com.example.Pattern_bot.session.UserSession;
 import com.example.Pattern_bot.session.SessionManager;
 import com.example.Pattern_bot.listener.menus.GenderMenu;
+import com.example.Pattern_bot.service.otherService.UserService;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 
@@ -23,6 +24,7 @@ public class SearchPartnerCommand extends CallbackCommand {
     private final GenderMenu genderMenu;
     private final ChatControlMenu chatControlMenu;
     private final PreferredGenderMenu preferredGenderMenu;
+    private final UserService userService;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final ConcurrentHashMap<Long, ScheduledFuture<?>> searchTasks = new ConcurrentHashMap<>();
 
@@ -30,12 +32,14 @@ public class SearchPartnerCommand extends CallbackCommand {
                                 SessionManager sessionManager,
                                 GenderMenu genderMenu,
                                 ChatControlMenu chatControlMenu,
-                                PreferredGenderMenu preferredGenderMenu) {
+                                PreferredGenderMenu preferredGenderMenu,
+                                UserService userService) {
         super(telegramBot);
         this.sessionManager = sessionManager;
         this.genderMenu = genderMenu;
         this.chatControlMenu = chatControlMenu;
         this.preferredGenderMenu = preferredGenderMenu;
+        this.userService = userService;
     }
 
     @Override
@@ -60,13 +64,15 @@ public class SearchPartnerCommand extends CallbackCommand {
             return;
         }
 
+        userService.incrementCountUses(chatId);
+
         // Отменяем предыдущие задачи поиска для этого пользователя
         cancelSearchTask(chatId);
 
         session.setSearching(true);
         sessionManager.updateSession(session);
 
-        sendTextMessage(chatId, "🔍 Ищем собеседника... Пожалуйста, подождите.");
+        chatControlMenu.sendSearchingMenu(chatId);
 
         // Запускаем поиск собеседника
         ScheduledFuture<?> future = scheduler.schedule(() -> findPartnerForUser(chatId, session), 2, TimeUnit.SECONDS);
@@ -77,7 +83,6 @@ public class SearchPartnerCommand extends CallbackCommand {
         // Проверяем, что пользователь все еще ищет
         UserSession currentSession = sessionManager.getSession(chatId);
         if (currentSession == null || !currentSession.isSearching()) {
-            sendTextMessage(chatId, "🛑 Поиск остановлен.");
             searchTasks.remove(chatId);
             return;
         }
@@ -112,17 +117,13 @@ public class SearchPartnerCommand extends CallbackCommand {
 
             // Уведомляем обоих пользователей
             sendTextMessage(chatId, """
-                    ✅ Собеседник найден! Начинайте общение.
-                    💬 Отправляйте текстовые сообщения, они будут пересылаться вашему собеседнику.
-                    ❌ Чтобы завершить диалог, нажмите 'Завершить диалог'""");
+                    ✅ Собеседник найден! Начинайте общение.'""");
+            chatControlMenu.sendChattingMenu(chatId);
 
             sendTextMessage(partnerChatId, """
-                    ✅ Собеседник найден! Начинайте общение.
-                    💬 Отправляйте текстовые сообщения, они будут пересылаться вашему собеседнику.
-                    ❌ Чтобы завершить диалог, нажмите 'Завершить диалог'""");
+                    ✅ Собеседник найден! Начинайте общение.""");
+            chatControlMenu.sendChattingMenu(partnerChatId);
 
-            chatControlMenu.sendChatControls(chatId);
-            chatControlMenu.sendChatControls(partnerChatId);
 
         } else {
             sendTextMessage(chatId, "😔 Пока нет доступных собеседников.\n" +

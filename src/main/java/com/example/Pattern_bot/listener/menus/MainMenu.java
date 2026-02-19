@@ -42,4 +42,33 @@ public class MainMenu {
                 .parseMode(ParseMode.valueOf("Markdown"))
                 .replyMarkup(keyboard));
     }
+
+    public void sendMainMenuWithControls(long chatId) {
+        String welcomeText = """
+        🎭 *Главное меню*
+        
+        Выберите действие:
+        """;
+
+        InlineKeyboardButton searchButton = new InlineKeyboardButton("🔍 Найти собеседника")
+                .callbackData("/search_partner");
+        InlineKeyboardButton genderButton = new InlineKeyboardButton("👤 Сменить пол")
+                .callbackData("/change_gender");
+        InlineKeyboardButton preferencesButton = new InlineKeyboardButton("⚙️ Кого ищу")
+                .callbackData("/change_preferences");
+        InlineKeyboardButton helpButton = new InlineKeyboardButton("❓ Помощь")
+                .callbackData("/help");
+        InlineKeyboardButton rulesButton = new InlineKeyboardButton("📜 Правила")
+                .callbackData("/rules");
+
+        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(
+                new InlineKeyboardButton[]{searchButton},
+                new InlineKeyboardButton[]{genderButton, preferencesButton},
+                new InlineKeyboardButton[]{helpButton, rulesButton}
+        );
+
+        telegramBot.execute(new SendMessage(chatId, welcomeText)
+                .parseMode(ParseMode.valueOf("Markdown"))
+                .replyMarkup(keyboard));
+    }
 }

@@ -3,6 +3,7 @@ package com.example.Pattern_bot.service.listenerService;
 import com.example.Pattern_bot.command.needed.CommandContainer;
 import com.example.Pattern_bot.session.SessionManager;
 import com.example.Pattern_bot.session.UserSession;
+import com.example.Pattern_bot.listener.menus.ChatControlMenu;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.ParseMode;
@@ -20,6 +21,7 @@ public class MainListenerService {
     private final CommandContainer commandContainer;
     private final SessionManager sessionManager;
     private final String prefix = "/";
+    private final ChatControlMenu chatControlMenu;
 
     public void dontUnderstand(Long userChatId) {
         telegramBot.execute(new SendMessage(
@@ -38,11 +40,9 @@ public class MainListenerService {
             if (session != null && session.getPartnerChatId() != null) {
                 try {
                     Long partnerChatId = Long.parseLong(session.getPartnerChatId());
-                    String messageToPartner = "💬 *Сообщение от собеседника:*\n\n" + text;
+                    String messageToPartner = "<b>💬 Сообщение от собеседника:</b>\n\n" + escapeHtml(text);
                     telegramBot.execute(new SendMessage(partnerChatId, messageToPartner)
-                            .parseMode(ParseMode.valueOf("Markdown")));
-                    telegramBot.execute(new SendMessage(chatId, "✅ Сообщение отправлено"));
-                    return;
+                            .parseMode(ParseMode.valueOf("HTML")));
             } catch (NumberFormatException e) {
                     log.error("Error parsing partner chat ID", e);
                     sendTextMessage(chatId, "❌ Ошибка при отправке сообщения.");
@@ -50,11 +50,20 @@ public class MainListenerService {
             } else {
                 sendTextMessage(chatId,
                         "💡 Вы не в диалоге. Для начала общения найдите собеседника через меню.");
+                chatControlMenu.sendChatControls(chatId);
             }
 
             //dontUnderstand(update.message().chat().id());
         }
 
+    }
+
+    private String escapeHtml(String text) {
+        if (text == null) return "";
+        return text
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 
     public void workWithButton(Update update) {

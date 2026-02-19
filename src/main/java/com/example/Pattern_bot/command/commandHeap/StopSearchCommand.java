@@ -15,6 +15,7 @@ public class StopSearchCommand extends CallbackCommand {
 
     private final SessionManager sessionManager;
     private final ChatControlMenu chatControlMenu;
+    private final SearchPartnerCommand searchPartnerCommand;
 
     public StopSearchCommand(TelegramBot telegramBot,
                              SessionManager sessionManager,
@@ -23,7 +24,7 @@ public class StopSearchCommand extends CallbackCommand {
         super(telegramBot);
         this.sessionManager = sessionManager;
         this.chatControlMenu = chatControlMenu;
-        // Добавляем зависимость
+        this.searchPartnerCommand = searchPartnerCommand;
     }
 
     @Override
