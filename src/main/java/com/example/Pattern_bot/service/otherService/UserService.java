@@ -1,5 +1,6 @@
 package com.example.Pattern_bot.service.otherService;
 
+import com.example.Pattern_bot.controller.dto.UserCountResponseDto;
 import com.example.Pattern_bot.model.UserEntity;
 import com.example.Pattern_bot.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -59,10 +60,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Integer getUserCountUses(Long chatId) {
-        return userRepository.findByChatId(chatId)
-                .map(UserEntity::getCountUses)
-                .orElse(0);
+    public UserCountResponseDto getUserCount() {
+        long count = userRepository.count();
+        return new UserCountResponseDto(count);
     }
 
     @Transactional(readOnly = true)
